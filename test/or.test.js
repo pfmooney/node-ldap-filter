@@ -27,15 +27,12 @@ test('Construct no args', function (t) {
 
 
 test('Construct args', function (t) {
-  var f = new OrFilter();
-  f.addFilter(new EqualityFilter({
-    attribute: 'foo',
-    value: 'bar'
-  }));
-  f.addFilter(new EqualityFilter({
-    attribute: 'zig',
-    value: 'zag'
-  }));
+  var f = new OrFilter({
+    filters: [
+      new EqualityFilter({attribute: 'foo', value: 'bar'}),
+      new EqualityFilter({attribute: 'zig', value: 'zag'})
+    ]
+  });
   t.ok(f);
   t.equal(f.toString(), '(|(foo=bar)(zig=zag))');
   t.end();

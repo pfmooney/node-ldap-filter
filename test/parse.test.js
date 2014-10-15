@@ -100,6 +100,7 @@ test('* substr filter (prefix)', function (t) {
   var str = '(foo=bar*)';
   var f = parse(str);
   t.ok(f);
+  t.equal(f.type, 'substring');
   t.equal(f.attribute, 'foo');
   t.equal(f.initial, 'bar');
   t.equal(f.toString(), '(foo=bar*)');
@@ -128,6 +129,25 @@ test('presence filter', function (t) {
   t.equal(f.type, 'present');
   t.equal(f.attribute, 'foo');
   t.equal(f.toString(), '(foo=*)');
+  t.end();
+});
+
+
+test('or filter', function (t) {
+  var f = parse('(|(foo=bar)(baz=bip))');
+  t.ok(f);
+  t.equal(f.type, 'or');
+  t.equal(f.filters.length, 2);
+  t.end();
+});
+
+
+test('approx filter', function (t) {
+  var f = parse('(foo~=bar)');
+  t.ok(f);
+  t.equal(f.type, 'approx');
+  t.equal(f.attribute, 'foo');
+  t.equal(f.value, 'bar');
   t.end();
 });
 

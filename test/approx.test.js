@@ -50,3 +50,14 @@ test('escape value only in toString()', function (t) {
   t.equal(f.toString(), '(foo~=ba\\28r\\29)');
   t.end();
 });
+
+
+test('matches throws', function (t) {
+  t.plan(1);
+  var f = new ApproximateFilter();
+  try {
+    f.matches({});
+  } catch (err) {
+    t.ok(err);
+  }
+});
