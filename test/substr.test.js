@@ -104,6 +104,20 @@ test('match any', function (t) {
 });
 
 
+test('match no-initial', function (t) {
+  var f = new SubstringFilter({
+    attribute: 'foo',
+    any: ['foo']
+  });
+  t.ok(f);
+  t.equal(f.toString(), '(foo=*foo*)');
+  t.ok(f.matches({foo: 'foobar'}));
+  t.ok(f.matches({foo: 'barfoo'}));
+  t.ok(!f.matches({foo: 'bar'}));
+  t.end();
+});
+
+
 test('escape for regex in matches', function (t) {
   var f = new SubstringFilter({
     attribute: 'fo(o',
