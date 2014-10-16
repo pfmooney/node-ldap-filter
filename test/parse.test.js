@@ -152,6 +152,26 @@ test('approx filter', function (t) {
 });
 
 
+test('ge filter', function (t) {
+  var f = parse('(foo>=5)');
+  t.ok(f);
+  t.equal(f.type, 'ge');
+  t.equal(f.attribute, 'foo');
+  t.equal(f.value, '5');
+  t.end();
+});
+
+
+test('le filter', function (t) {
+  var f = parse('(foo<=5)');
+  t.ok(f);
+  t.equal(f.type, 'le');
+  t.equal(f.attribute, 'foo');
+  t.equal(f.value, '5');
+  t.end();
+});
+
+
 test('bogus filter', function (t) {
   t.throws(function () {
     parse('foo>1');

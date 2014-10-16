@@ -35,6 +35,13 @@ test('Construct args', function (t) {
   t.equal(f.matchType, 'foo');
   t.equal(f.value, 'bar');
   t.equal(f.toString(), '(foo:=bar)');
+  f = new ExtensibleFilter({
+    matchType: 'foo',
+    rule: '1.2',
+    dnAttributes: true,
+    value: 'baz'
+  });
+  t.equal(f.toString(), '(foo:dn:1.2:=baz)');
   t.end();
 });
 
@@ -42,6 +49,7 @@ test('Construct args', function (t) {
 test('parse RFC example 1', function (t) {
   var f = filters.parse('(cn:caseExactMatch:=Fred Flintstone)');
   t.ok(f);
+  t.equal(f.type, 'ext');
   t.equal(f.matchType, 'cn');
   t.equal(f.matchingRule, 'caseExactMatch');
   t.equal(f.matchValue, 'Fred Flintstone');

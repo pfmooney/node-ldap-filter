@@ -39,6 +39,37 @@ test('Construct args', function (t) {
 });
 
 
+test('construct with raw', function (t) {
+  var f = new EqualityFilter({
+    attribute: 'foo',
+    raw: new Buffer([240])
+  });
+  t.ok(f);
+  t.ok(f.raw);
+  t.equal(f.raw[0], 240);
+  t.end();
+});
+
+
+test('value setter', function (t) {
+  var f = new EqualityFilter();
+  var data = new Buffer([240]);
+  f.value = data;
+  t.equal(f.raw[0], data[0], 'preserve buffer');
+  data = new Buffer('a');
+  f.value = data.toString();
+  t.equal(f.raw[0], data[0], 'convert string');
+  var err = null;
+  try {
+    f.value = {};
+  } catch (e) {
+    err = e;
+  }
+  t.ok(err, 'throw when !(string|buffer)');
+  t.end();
+});
+
+
 test('escape value only in toString()', function (t) {
   var f = new EqualityFilter({
     attribute: 'foo',
