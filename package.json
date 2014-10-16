@@ -6,11 +6,11 @@
   "name": "ldap-filter",
   "homepage": "http://ldapjs.org",
   "description": "API for handling LDAP-style filters",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/pmooney/node-ldap-filter.git"
+    "url": "git://github.com/pfmooney/node-ldap-filter.git"
   },
   "main": "lib/index.js",
   "directories": {
