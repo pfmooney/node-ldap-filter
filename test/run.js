@@ -1,3 +1,5 @@
+// Copyright 2014 Patrick Mooney.  All rights reserved.
+
 var assert = require('assert-plus');
 var fs = require('fs');
 var path = require('path');

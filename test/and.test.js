@@ -1,3 +1,6 @@
+// Copyright 2014 Mark Cavage, Inc.  All rights reserved.
+// Copyright 2014 Patrick Mooney.  All rights reserved.
+
 var test = require('tape').test;
 
 
@@ -5,7 +8,6 @@ var test = require('tape').test;
 
 var EqualityFilter;
 var AndFilter;
-
 
 
 ///--- Tests
