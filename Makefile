@@ -25,7 +25,7 @@ test: install
 	$(NPM) test
 
 .PHONY: check
-check:
+check: $(JSL_EXEC) $(JSSTYLE_EXEC)
 	$(JSL) --conf $(JSL_CONF) $(JS_FILES)
 	$(JSSTYLE) $(JSSTYLE_FLAGS) $(JS_FILES)
 
