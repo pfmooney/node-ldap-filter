@@ -59,16 +59,14 @@ test('value setter', function (t) {
   var data = new Buffer([240]);
   f.value = data;
   t.equal(f.raw[0], data[0], 'preserve buffer');
+
   data = new Buffer('a');
   f.value = data.toString();
   t.equal(f.raw[0], data[0], 'convert string');
-  var err = null;
-  try {
-    f.value = {};
-  } catch (e) {
-    err = e;
-  }
-  t.ok(err, 'throw when !(string|buffer)');
+
+  f.value = true;
+  t.equal(typeof (f.value), 'boolean', 'preserve other type');
+  t.ok(f.value);
   t.end();
 });
 
