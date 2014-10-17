@@ -2,7 +2,7 @@
 
 NPM = npm
 
-JS_FILES	:= $(shell find lib -name '*.js')
+JS_FILES	:= $(shell find lib test -name '*.js')
 
 JSL_CONF	 = tools/jsl.node.conf
 JSSTYLE_FLAGS	 = -f tools/jsstyle.conf

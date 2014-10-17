@@ -57,6 +57,7 @@ test('foreach multiple', function (t) {
       t.equal(item.filters.length, 2);
       break;
     default:
+      break;
     }
     count++;
   });
@@ -169,6 +170,7 @@ test('map multiple all-null', function (t) {
 });
 
 test('map complex', function (t) {
+  /* JSSTYLED */
   var f = filters.parse('(|(bad=foo)(num>=1)(!(bad=bar))(&(ok=foo)(good=bar)))');
   var n = f.map(function (item) {
     if (item.attribute && item.attribute === 'bad') {
@@ -178,6 +180,6 @@ test('map complex', function (t) {
     }
     return item;
   });
-  t.equal(f.toString(), '(|(num>=2)(&(ok=foo)(good=bar)))');
+  t.equal(n.toString(), '(|(num>=2)(&(ok=foo)(good=bar)))');
   t.end();
 });

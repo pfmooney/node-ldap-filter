@@ -13,11 +13,10 @@ var parse;
 ///--- Tests
 
 test('load library', function (t) {
-  filters = require('../lib/index');
-  t.ok(filters);
-  ExtensibleFilter = filters.ExtensibleFilter;
-  parse = filters.parse;
-  t.ok(ExtensibleFilter);
+  var lib = require('../lib/index');
+  t.ok(lib);
+  ExtensibleFilter = lib.ExtensibleFilter;
+  parse = lib.parse;
   t.end();
 });
 
@@ -50,7 +49,7 @@ test('Construct args', function (t) {
 
 
 test('parse RFC example 1', function (t) {
-  var f = filters.parse('(cn:caseExactMatch:=Fred Flintstone)');
+  var f = parse('(cn:caseExactMatch:=Fred Flintstone)');
   t.ok(f);
   t.equal(f.type, 'ext');
   t.equal(f.matchType, 'cn');
@@ -62,7 +61,7 @@ test('parse RFC example 1', function (t) {
 
 
 test('parse RFC example 2', function (t) {
-  var f = filters.parse('(cn:=Betty Rubble)');
+  var f = parse('(cn:=Betty Rubble)');
   t.ok(f);
   t.equal(f.matchType, 'cn');
   t.equal(f.matchValue, 'Betty Rubble');
@@ -73,7 +72,7 @@ test('parse RFC example 2', function (t) {
 
 
 test('parse RFC example 3', function (t) {
-  var f = filters.parse('(sn:dn:2.4.6.8.10:=Barney Rubble)');
+  var f = parse('(sn:dn:2.4.6.8.10:=Barney Rubble)');
   t.ok(f);
   t.equal(f.matchType, 'sn');
   t.equal(f.matchingRule, '2.4.6.8.10');
@@ -84,7 +83,7 @@ test('parse RFC example 3', function (t) {
 
 
 test('parse RFC example 3', function (t) {
-  var f = filters.parse('(o:dn:=Ace Industry)');
+  var f = parse('(o:dn:=Ace Industry)');
   t.ok(f);
   t.equal(f.matchType, 'o');
   t.notOk(f.matchingRule);
@@ -95,7 +94,7 @@ test('parse RFC example 3', function (t) {
 
 
 test('parse RFC example 4', function (t) {
-  var f = filters.parse('(:1.2.3:=Wilma Flintstone)');
+  var f = parse('(:1.2.3:=Wilma Flintstone)');
   t.ok(f);
   t.notOk(f.matchType);
   t.equal(f.matchingRule, '1.2.3');
@@ -106,7 +105,7 @@ test('parse RFC example 4', function (t) {
 
 
 test('parse RFC example 5', function (t) {
-  var f = filters.parse('(:DN:2.4.6.8.10:=Dino)');
+  var f = parse('(:DN:2.4.6.8.10:=Dino)');
   t.ok(f);
   t.notOk(f.matchType);
   t.equal(f.matchingRule, '2.4.6.8.10');
