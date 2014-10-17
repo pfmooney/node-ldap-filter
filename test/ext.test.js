@@ -44,6 +44,22 @@ test('Construct args', function (t) {
     value: 'baz'
   });
   t.equal(f.toString(), '(foo:dn:1.2:=baz)');
+  f = new ExtensibleFilter({
+    attribute: 'test',
+    value: 'bar'
+  });
+  t.equal(f.matchType, 'test');
+  t.end();
+});
+
+
+test('attribute synonym', function (t) {
+  var f = parse('foo:=bar');
+  t.equal(f.matchType, 'foo');
+  t.equal(f.attribute, 'foo');
+  f.attribute = 'baz';
+  t.equal(f.matchType, 'baz');
+  t.equal(f.attribute, 'baz');
   t.end();
 });
 
