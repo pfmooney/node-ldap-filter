@@ -73,9 +73,8 @@ test('match false', function (t) {
 });
 
 
-test('match empty', function (t) {
+test('RFC-4526 - empty AND', function (t) {
   var f = new AndFilter();
-  t.ok(f);
-  t.ok(!f.matches({ foo: 'bar', zig: 'zonk' }));
+  t.ok(f.matches({}));
   t.end();
 });

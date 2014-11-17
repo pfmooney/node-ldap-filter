@@ -72,3 +72,9 @@ test('match false', function (t) {
   t.ok(!f.matches({ foo: 'baz', zig: 'zonk' }));
   t.end();
 });
+
+test('RFC-4526 - empty OR', function (t) {
+  var f = new OrFilter();
+  t.notOk(f.matches({}));
+  t.end();
+});
