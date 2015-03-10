@@ -1,3 +1,7 @@
-Makefile
-deps
-tools
+/Makefile
+/deps
+/tools
+/test
+/coverage
+/.gitmodules
+/.npmignore
