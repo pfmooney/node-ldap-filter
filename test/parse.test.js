@@ -197,3 +197,11 @@ test('mismatched parens', function (t) {
   });
   t.end();
 });
+
+
+test('nested parens', function (t) {
+  t.throws(function () {
+    parse('((foo=bar))');
+  });
+  t.end();
+});
