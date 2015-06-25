@@ -128,3 +128,14 @@ test('escape EqualityFilter inputs', function (t) {
   t.equal(f.toString(), '(\\28|\\28foo=bar\\29\\29\\28)');
   t.end();
 });
+
+test('case insensitive match for objectClass attribute', function(t){
+  var f = new EqualityFilter({
+    attribute: 'objectClass',
+    value:     'posixaccount'
+  });
+
+  t.ok(f);
+  t.ok(f.matches({objectClass: 'PoSIxAccount'}));
+  t.end();
+});
