@@ -1,5 +1,5 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
-// Copyright 2014 Patrick Mooney.  All rights reserved.
+// Copyright 2015 Patrick Mooney
 
 var test = require('tape').test;
 
@@ -54,6 +54,7 @@ test('match true', function (t) {
   }));
   t.ok(f);
   t.ok(f.matches({ foo: 'bar', zig: 'zonk' }));
+  t.equal(f.json.type, 'Or');
   t.end();
 });
 

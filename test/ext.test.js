@@ -1,5 +1,5 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
-// Copyright 2014 Patrick Mooney.  All rights reserved.
+// Copyright 2015 Patrick Mooney
 
 var test = require('tape').test;
 
@@ -49,6 +49,12 @@ test('Construct args', function (t) {
     value: 'bar'
   });
   t.equal(f.matchType, 'test');
+  f = new ExtensibleFilter({
+    dnAttributes: true,
+    value: 'foo'
+  });
+  t.equal(f.toString(), '(:dn:=foo)');
+  t.equal(f.json.type, 'ExtensibleMatch');
   t.end();
 });
 

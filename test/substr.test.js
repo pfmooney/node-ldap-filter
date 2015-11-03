@@ -1,5 +1,5 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
-// Copyright 2014 Patrick Mooney.  All rights reserved.
+// Copyright 2015 Patrick Mooney
 
 var test = require('tape').test;
 
@@ -44,6 +44,7 @@ test('Construct args', function (t) {
   t.equal(f.any[1], 'zag');
   t.equal(f.final, 'baz');
   t.equal(f.toString(), '(foo=bar*zig*zag*baz)');
+  t.equal(f.json.type, 'SubstringMatch');
   t.end();
 });
 
@@ -84,11 +85,12 @@ test('match false', function (t) {
   var f = new SubstringFilter({
     attribute: 'foo',
     initial: 'bar',
-    foo: ['zig', 'zag'],
+    any: ['biz', 'biz'],
     'final': 'baz'
   });
   t.ok(f);
   t.ok(!f.matches({ foo: 'bafmoozigbarzagblahbaz' }));
+  t.ok(!f.matches({ baz: 'barbizbizbaz' }));
   t.end();
 });
 

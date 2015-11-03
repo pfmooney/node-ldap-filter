@@ -1,5 +1,5 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
-// Copyright 2014 Patrick Mooney.  All rights reserved.
+// Copyright 2015 Patrick Mooney
 
 var test = require('tape').test;
 
@@ -38,6 +38,7 @@ test('Construct args', function (t) {
   t.equal(f.attribute, 'foo');
   t.equal(f.value, 'bar');
   t.equal(f.toString(), '(foo~=bar)');
+  t.equal(f.json.type, 'ApproximateMatch');
   t.end();
 });
 
