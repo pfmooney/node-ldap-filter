@@ -145,21 +145,14 @@ test('missing :=', function (t) {
 });
 
 
-test('caseIgnoreSubstringsMatch handling', function (t) {
+test('substring-style handling', function (t) {
   var f;
-  f = parse('(foo:2.5.13.4:=a*b*c)');
+  f = parse('(foo:1.2.3.4:=a*\\2ab*c)');
   t.ok(f);
-  t.equal(f.value, 'a*b*c');
+  t.equal(f.value, 'a**b*c');
   t.equal(f.initial, 'a');
-  t.deepEqual(f.any, ['b']);
+  t.deepEqual(f.any, ['*b']);
   t.equal(f.final, 'c');
-
-  f = parse('(bar:caseIgnoreSubstringsMatch:=d*e*f)');
-  t.ok(f);
-  t.equal(f.value, 'd*e*f');
-  t.equal(f.initial, 'd');
-  t.deepEqual(f.any, ['e']);
-  t.equal(f.final, 'f');
 
   t.end();
 });
