@@ -127,5 +127,22 @@ test('escape EqualityFilter inputs', function (t) {
   t.equal(f.attribute, '(|(foo');
   t.equal(f.value, 'bar))(');
   t.equal(f.toString(), '(\\28|\\28foo=bar\\29\\29\\28)');
+
+  f.value = new Buffer([97, 115, 100, 102, 41, 40, 0]);
+  t.equal(f.toString(), '(\\28|\\28foo=\\61\\73\\64\\66\\29\\28\\00)');
+  t.end();
+});
+
+
+test('reject bad raw value', function (t) {
+  var f = new EqualityFilter({
+    attribute: 'foo',
+    value: 'bar'
+  });
+  t.ok(f);
+  f.raw = {bogus: 'yup'};
+  t.throws(function () {
+    f.toString();
+  });
   t.end();
 });
