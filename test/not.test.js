@@ -67,3 +67,21 @@ test('match false', function (t) {
   t.ok(!f.matches({ foo: 'bar' }));
   t.end();
 });
+
+
+test('setFilter', function (t) {
+  var f = new NotFilter({
+    filter: new EqualityFilter({
+      attribute: 'foo',
+      value: 'bar'
+    })
+  });
+  t.ok(f);
+  t.equal(f.toString(), '(!(foo=bar))');
+  f.setFilter(new EqualityFilter({
+    attribute: 'new',
+    value: 'val'
+  }));
+  t.equal(f.toString(), '(!(new=val))');
+  t.end();
+});
