@@ -137,6 +137,34 @@ test('parse RFC example 5', function (t) {
 });
 
 
+test('missing :=', function (t) {
+  t.throws(function () {
+    parse('(:dn:oops)');
+  });
+  t.end();
+});
+
+
+test('caseIgnoreSubstringsMatch handling', function (t) {
+  var f;
+  f = parse('(foo:2.5.13.4:=a*b*c)');
+  t.ok(f);
+  t.equal(f.value, 'a*b*c');
+  t.equal(f.initial, 'a');
+  t.deepEqual(f.any, ['b']);
+  t.equal(f.final, 'c');
+
+  f = parse('(bar:caseIgnoreSubstringsMatch:=d*e*f)');
+  t.ok(f);
+  t.equal(f.value, 'd*e*f');
+  t.equal(f.initial, 'd');
+  t.deepEqual(f.any, ['e']);
+  t.equal(f.final, 'f');
+
+  t.end();
+});
+
+
 test('matches throws', function (t) {
   t.plan(1);
   var f = new ExtensibleFilter();

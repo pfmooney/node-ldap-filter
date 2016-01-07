@@ -9,7 +9,7 @@ var parse = require('../lib/index').parse;
 ///--- Tests
 
 test('XML Strings in filter', function (t) {
-  var str = '(&(CentralUIEnrollments=\\<mydoc\\>*)(objectClass=User))';
+  var str = '(&(CentralUIEnrollments=<mydoc>*)(objectClass=User))';
   var f = parse(str);
   t.ok(f);
   t.ok(f.filters);
@@ -34,7 +34,7 @@ test('= in filter', function (t) {
 
 
 test('( in filter', function (t) {
-  var str = '(foo=bar\\()';
+  var str = 'foo=bar\\28';
   var f = parse(str);
   t.ok(f);
   t.equal(f.attribute, 'foo');
@@ -45,7 +45,7 @@ test('( in filter', function (t) {
 
 
 test(') in filter', function (t) {
-  var str = '(foo=bar\\))';
+  var str = '(foo=bar\\29)';
   var f = parse(str);
   t.ok(f);
   t.equal(f.attribute, 'foo');
@@ -55,30 +55,33 @@ test(') in filter', function (t) {
 });
 
 
-test('( in filter', function (t) {
-  var str = 'foo(bar=baz\\()';
+test('() in filter', function (t) {
+  var str = 'foobar=baz\\28\\29';
   var f = parse(str);
   t.ok(f);
-  t.equal(f.attribute, 'foo(bar');
+  t.equal(f.attribute, 'foobar');
   t.equal(f.value, 'baz()');
-  t.equal(f.toString(), '(foo\\28bar=baz\\28\\29)');
+  t.equal(f.toString(), '(foobar=baz\\28\\29)');
+  console.log(f.toString());
+  var f2 = parse(f.toString());
+  t.equal(f.toString(), f2.toString());
   t.end();
 });
 
 
-test('( in filter', function (t) {
-  var str = 'foo)(&(bar=baz)(';
+test(')( in filter', function (t) {
+  var str = 'foobar=baz\\29\\28';
   var f = parse(str);
   t.ok(f);
-  t.equal(f.attribute, 'foo)(&(bar');
+  t.equal(f.attribute, 'foobar');
   t.equal(f.value, 'baz)(');
-  t.equal(f.toString(), '(foo\\29\\28&\\28bar=baz\\29\\28)');
+  t.equal(f.toString(), '(foobar=baz\\29\\28)');
   t.end();
 });
 
 
 test('\\ in filter', function (t) {
-  var str = '(foo=bar\\\\)';
+  var str = '(foo=bar\\5c)';
   var f = parse(str);
   t.ok(f);
   t.equal(f.attribute, 'foo');
@@ -87,9 +90,19 @@ test('\\ in filter', function (t) {
   t.end();
 });
 
+test('\\0 in filter', function (t) {
+  var str = '(foo=bar\\00)';
+  var f = parse(str);
+  t.ok(f);
+  t.equal(f.attribute, 'foo');
+  t.equal(f.value, 'bar\0');
+  t.equal(f.toString(), '(foo=bar\\00)');
+  t.end();
+});
+
 
 test('* in equality filter', function (t) {
-  var str = '(foo=bar\\*)';
+  var str = '(foo=bar\\2a)';
   var f = parse(str);
   t.ok(f);
   t.equal(f.attribute, 'foo');
@@ -175,18 +188,30 @@ test('le filter', function (t) {
 });
 
 
-test('bogus filter', function (t) {
+test('bogus filters', function (t) {
   t.throws(function () {
     parse('foo>1');
-  });
-  t.end();
-});
+  }, 'junk');
 
+  t.throws(function () {
+    parse('(&(valid=notquite)())');
+  }, 'empty parens');
 
-test('bogus filter !=', function (t) {
+  t.throws(function () {
+    parse('(&(valid=notquite)wut)');
+  }, 'cruft inside AndFilter');
+
+  t.throws(function () {
+    parse('(bad=asd(fdsa)');
+  }, 'unescaped paren');
+
+  t.throws(function () {
+    parse('bad=\\gg');
+  }, 'bad hex escape');
+
   t.throws(function () {
     parse('foo!=1');
-  });
+  }, 'fake operator');
   t.end();
 });
 
