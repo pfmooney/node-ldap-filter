@@ -1,5 +1,9 @@
 # ldap-filter Changelog
 
+## CURRENT
+
+- Tolerate underscores in attribute names
+
 ## 0.3.0
 
 - Enforce stricter output escaping for buffer values

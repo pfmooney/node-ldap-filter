@@ -90,6 +90,7 @@ test('\\ in filter', function (t) {
   t.end();
 });
 
+
 test('\\0 in filter', function (t) {
   var str = '(foo=bar\\00)';
   var f = parse(str);
@@ -228,5 +229,16 @@ test('nested parens', function (t) {
   t.throws(function () {
     parse('((foo=bar))');
   });
+  t.end();
+});
+
+
+test('tolerate underscores in names', function (t) {
+  var f = parse('(foo_bar=val)');
+  t.ok(f);
+  t.equal(f.attribute, 'foo_bar');
+  f = parse('(_leading=val)');
+  t.ok(f);
+  t.equal(f.attribute, '_leading');
   t.end();
 });
