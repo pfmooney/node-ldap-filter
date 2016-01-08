@@ -1,6 +1,6 @@
 # ldap-filter Changelog
 
-## CURRENT
+## 0.3.1
 
 - Tolerate underscores in attribute names
 
