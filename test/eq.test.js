@@ -128,8 +128,14 @@ test('escape EqualityFilter inputs', function (t) {
   t.equal(f.value, 'bar))(');
   t.equal(f.toString(), '(\\28|\\28foo=bar\\29\\29\\28)');
 
-  f.value = new Buffer([97, 115, 100, 102, 41, 40, 0]);
-  t.equal(f.toString(), '(\\28|\\28foo=\\61\\73\\64\\66\\29\\28\\00)');
+  f.value = new Buffer([97, 115, 100, 102, 41, 40, 0, 255]);
+  t.equal(f.toString(), '(\\28|\\28foo=\\61\\73\\64\\66\\29\\28\\00\\ff)');
+
+  f.value = new Buffer([195, 40]);
+  t.equal(f.toString(), '(\\28|\\28foo=\\c3\\28)');
+
+  f.value = new Buffer([195, 177]);
+  t.equal(f.toString(), '(\\28|\\28foo=ñ)');
   t.end();
 });
 
@@ -139,7 +145,9 @@ test('reject bad raw value', function (t) {
     attribute: 'foo',
     value: 'bar'
   });
-  t.ok(f);
+  t.equal(f.toString(), '(foo=bar)');
+  f.raw = 'sure';
+  t.equal(f.toString(), '(foo=sure)');
   f.raw = {bogus: 'yup'};
   t.throws(function () {
     f.toString();
