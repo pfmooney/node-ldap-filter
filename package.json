@@ -6,7 +6,7 @@
   "name": "ldap-filter",
   "homepage": "http://ldapjs.org",
   "description": "API for handling LDAP-style filters",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "node": ">=0.8"
   },
   "dependencies": {
-    "assert-plus": "0.1.5"
+    "assert-plus": "^0.2.0"
   },
   "devDependencies": {
     "faucet": "0.0.1",

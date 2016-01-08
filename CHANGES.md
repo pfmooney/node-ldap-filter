@@ -1,6 +1,6 @@
 # ldap-filter Changelog
 
-## CURRENT
+## 0.3.0
 
 - Enforce stricter output escaping for buffer values
 - **BREAKING** Rename `NotFilter.addfilter` to `NotFilter.setFilter`
@@ -10,6 +10,7 @@
   the `()\*` set, the new parser requires them to be escaped via the `\XX`
   hex notation.  This is in keeping with
   [RFC 4514](http://tools.ietf.org/search/rfc4515)
+- Perform better escaping for values which are not UTF-8
 
 ## 0.2.3
 - Update dev dependencies
