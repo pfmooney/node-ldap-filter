@@ -88,6 +88,24 @@ test('\\ in filter', function (t) {
 });
 
 
+test('\\ at the end of subfilter', function (t) {
+  var and = parse('(&(foo=\\\\)(zig=\\)))');
+  t.ok(and);
+  t.equal(and.filters.length, 2, 'AndFilter has two parts');
+  t.equal(and.toString(), '(&(foo=\\5c)(zig=\\29))',
+    'Correctly parsed two separate equalities');
+  var or = parse('(|(&(foo=\\(\\\\)(zig=\\())(zag=\\())');
+  t.ok(or);
+  t.equal(or.filters.length, 2);
+  t.equal(or.type, 'or');
+  t.equal(or.filters[0].type, 'and');
+  t.equal(or.filters[0].filters.length, 2);
+  t.equal(or.filters[1].type, 'equal');
+  t.equal(or.toString(), '(|(&(foo=\\28\\5c)(zig=\\28))(zag=\\28))');
+  t.end();
+});
+
+
 test('* in equality filter', function (t) {
   var str = '(foo=bar\\*)';
   var f = parse(str);
