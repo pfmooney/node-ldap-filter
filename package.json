@@ -1,12 +1,13 @@
 {
   "author": "Patrick Mooney",
   "contributors": [
-    "Mark Cavage <mcavage@gmail.com>"
+    "Mark Cavage <mcavage@gmail.com>",
+    "Cody Peter Mello <cody.mello@joyent.com>"
   ],
   "name": "ldap-filter",
   "homepage": "http://ldapjs.org",
   "description": "API for handling LDAP-style filters",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "repository": {
     "type": "git",
