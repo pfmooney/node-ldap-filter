@@ -1,5 +1,6 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
 // Copyright 2014 Patrick Mooney.  All rights reserved.
+// Copyright 2016 Joyent, Inc.
 
 var test = require('tape').test;
 
@@ -213,6 +214,7 @@ test('bogus filters', function (t) {
   t.throws(function () {
     parse('foo!=1');
   }, 'fake operator');
+
   t.end();
 });
 
@@ -221,6 +223,72 @@ test('mismatched parens', function (t) {
   t.throws(function () {
     parse('(&(foo=bar)(!(state=done))');
   });
+
+  t.throws(function () {
+    parse('(foo=1');
+  }, 'missing last paren');
+
+  t.throws(function () {
+    parse('(foo=1\\29');
+  }, 'missing last paren');
+
+  t.throws(function () {
+    parse('foo=1)');
+  }, 'trailing paren');
+
+  t.throws(function () {
+    parse('foo=1))');
+  }, 'trailing paren');
+
+  t.throws(function () {
+    parse('foo=1)a)');
+  }, 'trailing paren');
+
+  t.throws(function () {
+    parse('(foo=1)trailing');
+  }, 'trailing text');
+
+  t.throws(function () {
+    parse('leading(foo=1)');
+  }, 'leading text');
+
+  t.end();
+});
+
+
+test('garbage in subfilter not allowed', function (t) {
+  t.throws(function () {
+    parse('(&(foo=bar)|(baz=quux)(hello=world))');
+  }, '| subfilter without parens not allowed');
+
+  t.throws(function () {
+    parse('(&(foo=bar)!(baz=quux)(hello=world))');
+  }, '! subfilter without parens not allowed');
+
+  t.throws(function () {
+    parse('(&(foo=bar)&(baz=quux)(hello=world))');
+  }, '& subfilter without parens not allowed');
+
+  t.throws(function () {
+    parse('(&(foo=bar)g(baz=quux)(hello=world))');
+  });
+
+  t.throws(function () {
+    parse('(&(foo=bar)=(baz=quux)(hello=world))');
+  });
+
+  t.throws(function () {
+    parse('(&foo=bar)');
+  });
+
+  t.throws(function () {
+    parse('(|foo=bar)');
+  });
+
+  t.throws(function () {
+    parse('(!foo=bar)');
+  });
+
   t.end();
 });
 
