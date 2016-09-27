@@ -1,5 +1,6 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
 // Copyright 2015 Patrick Mooney
+// Copyright 2016 Joyent, Inc.
 
 var test = require('tape').test;
 
@@ -43,18 +44,38 @@ test('Construct args', function (t) {
     dnAttributes: true,
     value: 'baz'
   });
+  t.deepEqual(f.json, {
+    type: 'ExtensibleMatch',
+    matchRule: '1.2',
+    matchType: 'foo',
+    matchValue: 'baz',
+    dnAttributes: true
+  });
   t.equal(f.toString(), '(foo:dn:1.2:=baz)');
   f = new ExtensibleFilter({
     attribute: 'test',
     value: 'bar'
   });
   t.equal(f.matchType, 'test');
+  t.deepEqual(f.json, {
+    type: 'ExtensibleMatch',
+    matchRule: undefined,
+    matchType: 'test',
+    matchValue: 'bar',
+    dnAttributes: false
+  });
   f = new ExtensibleFilter({
     dnAttributes: true,
     value: 'foo'
   });
   t.equal(f.toString(), '(:dn:=foo)');
-  t.equal(f.json.type, 'ExtensibleMatch');
+  t.deepEqual(f.json, {
+    type: 'ExtensibleMatch',
+    matchRule: undefined,
+    matchType: undefined,
+    matchValue: 'foo',
+    dnAttributes: true
+  });
   t.end();
 });
 

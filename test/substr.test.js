@@ -1,5 +1,6 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
 // Copyright 2015 Patrick Mooney
+// Copyright 2016 Joyent, Inc.
 
 var test = require('tape').test;
 
@@ -44,7 +45,12 @@ test('Construct args', function (t) {
   t.equal(f.any[1], 'zag');
   t.equal(f.final, 'baz');
   t.equal(f.toString(), '(foo=bar*zig*zag*baz)');
-  t.equal(f.json.type, 'SubstringMatch');
+  t.deepEqual(f.json, {
+    type: 'SubstringMatch',
+    initial: 'bar',
+    any: [ 'zig', 'zag' ],
+    final: 'baz'
+  });
   t.end();
 });
 

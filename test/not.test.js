@@ -1,5 +1,6 @@
 // Copyright 2014 Mark Cavage, Inc.  All rights reserved.
 // Copyright 2015 Patrick Mooney
+// Copyright 2016 Joyent, Inc.
 
 var test = require('tape').test;
 
@@ -38,7 +39,14 @@ test('Construct args', function (t) {
   });
   t.ok(f);
   t.equal(f.toString(), '(!(foo=bar))');
-  t.equal(f.json.type, 'Not');
+  t.deepEqual(f.json, {
+    type: 'Not',
+    filter: {
+      type: 'EqualityMatch',
+      attribute: 'foo',
+      value: 'bar'
+    }
+  });
   t.end();
 });
 
