@@ -7,6 +7,19 @@ var test = require('tape').test;
 var parse = require('../lib/index').parse;
 
 
+function checkFilters(t, filters) {
+  filters.forEach(function (filter) {
+    var f = parse(filter.str);
+    t.ok(f, 'Parsed "' + filter.str + '"');
+    t.equal(f.type, filter.type);
+    t.equal(f.attribute, 'foo');
+    t.equal(f.value, filter.val);
+    t.equal(f.toString(), filter.output);
+  });
+  t.end();
+}
+
+
 ///--- Tests
 
 test('XML Strings in filter', function (t) {
@@ -29,7 +42,10 @@ test('= in filter', function (t) {
   t.ok(f);
   t.equal(f.attribute, 'uniquemember');
   t.equal(f.value,
-          'uuid=930896af-bf8c-48d4-885c-6573a94b1853, ou=users, o=smartdc');
+    'uuid=930896af-bf8c-48d4-885c-6573a94b1853, ou=users, o=smartdc');
+  t.equal(f.toString(),
+    '(uniquemember=uuid=930896af-bf8c-48d4-885c-6573a94b1853, ' +
+    'ou=users, o=smartdc)');
   t.end();
 });
 
@@ -81,14 +97,24 @@ test(')( in filter', function (t) {
 });
 
 
-test('\\ in filter', function (t) {
-  var str = '(foo=bar\\5c)';
-  var f = parse(str);
-  t.ok(f);
-  t.equal(f.attribute, 'foo');
-  t.equal(f.value, 'bar\\');
-  t.equal(f.toString(), '(foo=bar\\5c)');
-  t.end();
+test('literal \\ in filter', function (t) {
+  var v1 = 'bar\\';
+  var v2 = '\\bar\\baz\\';
+  var v3 = '\\';
+  checkFilters(t, [
+    { str: '(foo=bar\\5c)', type: 'equal', val: v1, output: '(foo=bar\\5c)' },
+    { str: '(foo<=bar\\5c)', type: 'le', val: v1, output: '(foo<=bar\\5c)' },
+    { str: '(foo>=bar\\5c)', type: 'ge', val: v1, output: '(foo>=bar\\5c)' },
+    { str: '(foo=\\5cbar\\5cbaz\\5c)', type: 'equal', val: v2,
+      output: '(foo=\\5cbar\\5cbaz\\5c)' },
+    { str: '(foo>=\\5cbar\\5cbaz\\5c)', type: 'ge', val: v2,
+      output: '(foo>=\\5cbar\\5cbaz\\5c)' },
+    { str: '(foo<=\\5cbar\\5cbaz\\5c)', type: 'le', val: v2,
+      output: '(foo<=\\5cbar\\5cbaz\\5c)' },
+    { str: '(foo=\\5c)', type: 'equal', val: v3, output: '(foo=\\5c)' },
+    { str: '(foo<=\\5c)', type: 'le', val: v3, output: '(foo<=\\5c)' },
+    { str: '(foo>=\\5c)', type: 'ge', val: v3, output: '(foo>=\\5c)' }
+  ]);
 });
 
 
@@ -103,14 +129,24 @@ test('\\0 in filter', function (t) {
 });
 
 
-test('* in equality filter', function (t) {
-  var str = '(foo=bar\\2a)';
-  var f = parse(str);
-  t.ok(f);
-  t.equal(f.attribute, 'foo');
-  t.equal(f.value, 'bar*');
-  t.equal(f.toString(), '(foo=bar\\2a)');
-  t.end();
+test('literal * in filters', function (t) {
+  var v1 = 'bar*';
+  var v2 = '*bar*baz*';
+  var v3 = '*';
+  checkFilters(t, [
+    { str: '(foo=bar\\2a)', type: 'equal', val: v1, output: '(foo=bar\\2a)' },
+    { str: '(foo<=bar\\2a)', type: 'le', val: v1, output: '(foo<=bar\\2a)' },
+    { str: '(foo>=bar\\2a)', type: 'ge', val: v1, output: '(foo>=bar\\2a)' },
+    { str: '(foo=\\2abar\\2abaz\\2a)', type: 'equal', val: v2,
+      output: '(foo=\\2abar\\2abaz\\2a)' },
+    { str: '(foo>=\\2abar\\2abaz\\2a)', type: 'ge', val: v2,
+      output: '(foo>=\\2abar\\2abaz\\2a)' },
+    { str: '(foo<=\\2abar\\2abaz\\2a)', type: 'le', val: v2,
+      output: '(foo<=\\2abar\\2abaz\\2a)' },
+    { str: '(foo=\\2a)', type: 'equal', val: v3, output: '(foo=\\2a)' },
+    { str: '(foo<=\\2a)', type: 'le', val: v3, output: '(foo<=\\2a)' },
+    { str: '(foo>=\\2a)', type: 'ge', val: v3, output: '(foo>=\\2a)' }
+  ]);
 });
 
 
@@ -121,7 +157,51 @@ test('* substr filter (prefix)', function (t) {
   t.equal(f.type, 'substring');
   t.equal(f.attribute, 'foo');
   t.equal(f.initial, 'bar');
+  t.equal(f.any.length, 0);
+  t.equal(f.final, '');
   t.equal(f.toString(), '(foo=bar*)');
+  t.end();
+});
+
+
+test('* substr filter (suffix)', function (t) {
+  var str = '(foo=*bar)';
+  var f = parse(str);
+  t.ok(f);
+  t.equal(f.type, 'substring');
+  t.equal(f.attribute, 'foo');
+  t.equal(f.initial, '');
+  t.equal(f.any.length, 0);
+  t.equal(f.final, 'bar');
+  t.equal(f.toString(), '(foo=*bar)');
+  t.end();
+});
+
+
+test('escaped * in substr filter (prefix)', function (t) {
+  var str = '(foo=bar\\2a*)';
+  var f = parse(str);
+  t.ok(f);
+  t.equal(f.type, 'substring');
+  t.equal(f.attribute, 'foo');
+  t.equal(f.initial, 'bar*');
+  t.equal(f.any.length, 0);
+  t.equal(f.final, '');
+  t.equal(f.toString(), '(foo=bar\\2a*)');
+  t.end();
+});
+
+
+test('escaped * in substr filter (suffix)', function (t) {
+  var str = '(foo=*bar\\2a)';
+  var f = parse(str);
+  t.ok(f);
+  t.equal(f.type, 'substring');
+  t.equal(f.attribute, 'foo');
+  t.equal(f.initial, '');
+  t.equal(f.any.length, 0);
+  t.equal(f.final, 'bar*');
+  t.equal(f.toString(), '(foo=*bar\\2a)');
   t.end();
 });
 
@@ -170,6 +250,97 @@ test('approx filter', function (t) {
 });
 
 
+test('<= in filters', function (t) {
+  checkFilters(t, [
+    { str: '(foo=<=)', type: 'equal', val: '<=', output: '(foo=<=)' },
+    { str: '(foo<=<=)', type: 'le', val: '<=', output: '(foo<=<=)' },
+    { str: '(foo>=<=)', type: 'ge', val: '<=', output: '(foo>=<=)' },
+    { str: '(foo=bar<=baz)', type: 'equal', val: 'bar<=baz',
+      output: '(foo=bar<=baz)' },
+    { str: '(foo<=bar<=baz)', type: 'le', val: 'bar<=baz',
+      output: '(foo<=bar<=baz)' },
+    { str: '(foo>=bar<=baz)', type: 'ge', val: 'bar<=baz',
+      output: '(foo>=bar<=baz)' },
+    { str: '(foo=bar<=)', type: 'equal', val: 'bar<=',
+      output: '(foo=bar<=)' },
+    { str: '(foo<=bar<=)', type: 'le', val: 'bar<=', output: '(foo<=bar<=)' },
+    { str: '(foo>=bar<=)', type: 'ge', val: 'bar<=', output: '(foo>=bar<=)' }
+  ]);
+});
+
+
+test('>= in filters', function (t) {
+  checkFilters(t, [
+    { str: '(foo=>=)', type: 'equal', val: '>=', output: '(foo=>=)' },
+    { str: '(foo<=>=)', type: 'le', val: '>=', output: '(foo<=>=)' },
+    { str: '(foo>=>=)', type: 'ge', val: '>=', output: '(foo>=>=)' },
+    { str: '(foo=bar>=baz)', type: 'equal', val: 'bar>=baz',
+      output: '(foo=bar>=baz)' },
+    { str: '(foo<=bar>=baz)', type: 'le', val: 'bar>=baz',
+      output: '(foo<=bar>=baz)' },
+    { str: '(foo>=bar>=baz)', type: 'ge', val: 'bar>=baz',
+      output: '(foo>=bar>=baz)' },
+    { str: '(foo=bar>=)', type: 'equal', val: 'bar>=', output: '(foo=bar>=)' },
+    { str: '(foo<=bar>=)', type: 'le', val: 'bar>=', output: '(foo<=bar>=)' },
+    { str: '(foo>=bar>=)', type: 'ge', val: 'bar>=', output: '(foo>=bar>=)' }
+  ]);
+});
+
+
+test('& in filters', function (t) {
+  checkFilters(t, [
+    { str: '(foo=&)', type: 'equal', val: '&', output: '(foo=&)' },
+    { str: '(foo<=&)', type: 'le', val: '&', output: '(foo<=&)' },
+    { str: '(foo>=&)', type: 'ge', val: '&', output: '(foo>=&)' },
+    { str: '(foo=bar&baz)', type: 'equal', val: 'bar&baz',
+      output: '(foo=bar&baz)' },
+    { str: '(foo<=bar&baz)', type: 'le', val: 'bar&baz',
+      output: '(foo<=bar&baz)' },
+    { str: '(foo>=bar&baz)', type: 'ge', val: 'bar&baz',
+      output: '(foo>=bar&baz)' },
+    { str: '(foo=bar&)', type: 'equal', val: 'bar&', output: '(foo=bar&)' },
+    { str: '(foo<=bar&)', type: 'le', val: 'bar&', output: '(foo<=bar&)' },
+    { str: '(foo>=bar&)', type: 'ge', val: 'bar&', output: '(foo>=bar&)' }
+  ]);
+});
+
+
+test('| in filters', function (t) {
+  checkFilters(t, [
+    { str: '(foo=|)', type: 'equal', val: '|', output: '(foo=|)' },
+    { str: '(foo<=|)', type: 'le', val: '|', output: '(foo<=|)' },
+    { str: '(foo>=|)', type: 'ge', val: '|', output: '(foo>=|)' },
+    { str: '(foo=bar|baz)', type: 'equal', val: 'bar|baz',
+      output: '(foo=bar|baz)' },
+    { str: '(foo<=bar|baz)', type: 'le', val: 'bar|baz',
+      output: '(foo<=bar|baz)' },
+    { str: '(foo>=bar|baz)', type: 'ge', val: 'bar|baz',
+      output: '(foo>=bar|baz)' },
+    { str: '(foo=bar|)', type: 'equal', val: 'bar|', output: '(foo=bar|)' },
+    { str: '(foo<=bar|)', type: 'le', val: 'bar|', output: '(foo<=bar|)' },
+    { str: '(foo>=bar|)', type: 'ge', val: 'bar|', output: '(foo>=bar|)' }
+  ]);
+});
+
+
+test('! in filters', function (t) {
+  checkFilters(t, [
+    { str: '(foo=!)', type: 'equal', val: '!', output: '(foo=!)' },
+    { str: '(foo<=!)', type: 'le', val: '!', output: '(foo<=!)' },
+    { str: '(foo>=!)', type: 'ge', val: '!', output: '(foo>=!)' },
+    { str: '(foo=bar!baz)', type: 'equal', val: 'bar!baz',
+      output: '(foo=bar!baz)' },
+    { str: '(foo<=bar!baz)', type: 'le', val: 'bar!baz',
+      output: '(foo<=bar!baz)' },
+    { str: '(foo>=bar!baz)', type: 'ge', val: 'bar!baz',
+      output: '(foo>=bar!baz)' },
+    { str: '(foo=bar!)', type: 'equal', val: 'bar!', output: '(foo=bar!)' },
+    { str: '(foo<=bar!)', type: 'le', val: 'bar!', output: '(foo<=bar!)' },
+    { str: '(foo>=bar!)', type: 'ge', val: 'bar!', output: '(foo>=bar!)' }
+  ]);
+});
+
+
 test('ge filter', function (t) {
   var f = parse('(foo>=5)');
   t.ok(f);
@@ -187,6 +358,24 @@ test('le filter', function (t) {
   t.equal(f.attribute, 'foo');
   t.equal(f.value, '5');
   t.end();
+});
+
+
+test('unicode in filter', function (t) {
+  checkFilters(t, [
+    { str: '(foo=☕⛵ᄨ)', type: 'equal',
+      val: '☕⛵ᄨ', output: '(foo=☕⛵ᄨ)' },
+    { str: '(foo<=☕⛵ᄨ)', type: 'le',
+      val: '☕⛵ᄨ', output: '(foo<=☕⛵ᄨ)' },
+    { str: '(foo>=☕⛵ᄨ)', type: 'ge',
+      val: '☕⛵ᄨ', output: '(foo>=☕⛵ᄨ)' },
+    { str: '(foo=ᎢᏣᎵᏍᎠᏁᏗ)', type: 'equal',
+      val: 'ᎢᏣᎵᏍᎠᏁᏗ', output: '(foo=ᎢᏣᎵᏍᎠᏁᏗ)' },
+    { str: '(foo<=ᎢᏣᎵᏍᎠᏁᏗ)', type: 'le',
+      val: 'ᎢᏣᎵᏍᎠᏁᏗ', output: '(foo<=ᎢᏣᎵᏍᎠᏁᏗ)' },
+    { str: '(foo>=ᎢᏣᎵᏍᎠᏁᏗ)', type: 'ge',
+      val: 'ᎢᏣᎵᏍᎠᏁᏗ', output: '(foo>=ᎢᏣᎵᏍᎠᏁᏗ)' }
+  ]);
 });
 
 
