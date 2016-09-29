@@ -1,5 +1,12 @@
 # ldap-filter Changelog
 
+## 0.3.2
+
+- Perform better checks for trailing characters
+- Improve test coverage
+- Change \*Filter.json to work recursively for child filters
+- Bump assert-plus dependency to 1.0.0
+
 ## 0.3.1
 
 - Tolerate underscores in attribute names
