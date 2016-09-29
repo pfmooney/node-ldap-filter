@@ -97,6 +97,114 @@ test(')( in filter', function (t) {
 });
 
 
+test('newlines in filter', function (t) {
+  var v1 = '\n';
+  var v2 = 'bar\n';
+  var v3 = '\nbar';
+  checkFilters(t, [
+    { str: '(foo=\n)', type: 'equal', val: v1, output: '(foo=\n)' },
+    { str: '(foo<=\n)', type: 'le', val: v1, output: '(foo<=\n)' },
+    { str: '(foo>=\n)', type: 'ge', val: v1, output: '(foo>=\n)' },
+    { str: '(foo=\\0a)', type: 'equal', val: v1, output: '(foo=\n)' },
+    { str: '(foo<=\\0a)', type: 'le', val: v1, output: '(foo<=\n)' },
+    { str: '(foo>=\\0a)', type: 'ge', val: v1, output: '(foo>=\n)' },
+    { str: '(foo=bar\n)', type: 'equal', val: v2, output: '(foo=bar\n)' },
+    { str: '(foo<=bar\n)', type: 'le', val: v2, output: '(foo<=bar\n)' },
+    { str: '(foo>=bar\n)', type: 'ge', val: v2, output: '(foo>=bar\n)' },
+    { str: '(foo=bar\\0a)', type: 'equal', val: v2, output: '(foo=bar\n)' },
+    { str: '(foo<=bar\\0a)', type: 'le', val: v2, output: '(foo<=bar\n)' },
+    { str: '(foo>=bar\\0a)', type: 'ge', val: v2, output: '(foo>=bar\n)' },
+    { str: '(foo=\nbar)', type: 'equal', val: v3, output: '(foo=\nbar)' },
+    { str: '(foo<=\nbar)', type: 'le', val: v3, output: '(foo<=\nbar)' },
+    { str: '(foo>=\nbar)', type: 'ge', val: v3, output: '(foo>=\nbar)' },
+    { str: '(foo=\\0abar)', type: 'equal', val: v3, output: '(foo=\nbar)' },
+    { str: '(foo<=\\0abar)', type: 'le', val: v3, output: '(foo<=\nbar)' },
+    { str: '(foo>=\\0abar)', type: 'ge', val: v3, output: '(foo>=\nbar)' },
+  ]);
+});
+
+
+test('carriage returns in filter', function (t) {
+  var v1 = '\r';
+  var v2 = 'bar\r';
+  var v3 = '\rbar';
+  checkFilters(t, [
+    { str: '(foo=\r)', type: 'equal', val: v1, output: '(foo=\r)' },
+    { str: '(foo<=\r)', type: 'le', val: v1, output: '(foo<=\r)' },
+    { str: '(foo>=\r)', type: 'ge', val: v1, output: '(foo>=\r)' },
+    { str: '(foo=\\0d)', type: 'equal', val: v1, output: '(foo=\r)' },
+    { str: '(foo<=\\0d)', type: 'le', val: v1, output: '(foo<=\r)' },
+    { str: '(foo>=\\0d)', type: 'ge', val: v1, output: '(foo>=\r)' },
+    { str: '(foo=bar\r)', type: 'equal', val: v2, output: '(foo=bar\r)' },
+    { str: '(foo<=bar\r)', type: 'le', val: v2, output: '(foo<=bar\r)' },
+    { str: '(foo>=bar\r)', type: 'ge', val: v2, output: '(foo>=bar\r)' },
+    { str: '(foo=bar\\0d)', type: 'equal', val: v2, output: '(foo=bar\r)' },
+    { str: '(foo<=bar\\0d)', type: 'le', val: v2, output: '(foo<=bar\r)' },
+    { str: '(foo>=bar\\0d)', type: 'ge', val: v2, output: '(foo>=bar\r)' },
+    { str: '(foo=\rbar)', type: 'equal', val: v3, output: '(foo=\rbar)' },
+    { str: '(foo<=\rbar)', type: 'le', val: v3, output: '(foo<=\rbar)' },
+    { str: '(foo>=\rbar)', type: 'ge', val: v3, output: '(foo>=\rbar)' },
+    { str: '(foo=\\0dbar)', type: 'equal', val: v3, output: '(foo=\rbar)' },
+    { str: '(foo<=\\0dbar)', type: 'le', val: v3, output: '(foo<=\rbar)' },
+    { str: '(foo>=\\0dbar)', type: 'ge', val: v3, output: '(foo>=\rbar)' },
+  ]);
+});
+
+
+test('tabs in filter', function (t) {
+  var v1 = '\t';
+  var v2 = 'bar\t';
+  var v3 = '\tbar';
+  checkFilters(t, [
+    { str: '(foo=\t)', type: 'equal', val: v1, output: '(foo=\t)' },
+    { str: '(foo<=\t)', type: 'le', val: v1, output: '(foo<=\t)' },
+    { str: '(foo>=\t)', type: 'ge', val: v1, output: '(foo>=\t)' },
+    { str: '(foo=\\09)', type: 'equal', val: v1, output: '(foo=\t)' },
+    { str: '(foo<=\\09)', type: 'le', val: v1, output: '(foo<=\t)' },
+    { str: '(foo>=\\09)', type: 'ge', val: v1, output: '(foo>=\t)' },
+    { str: '(foo=bar\t)', type: 'equal', val: v2, output: '(foo=bar\t)' },
+    { str: '(foo<=bar\t)', type: 'le', val: v2, output: '(foo<=bar\t)' },
+    { str: '(foo>=bar\t)', type: 'ge', val: v2, output: '(foo>=bar\t)' },
+    { str: '(foo=bar\\09)', type: 'equal', val: v2, output: '(foo=bar\t)' },
+    { str: '(foo<=bar\\09)', type: 'le', val: v2, output: '(foo<=bar\t)' },
+    { str: '(foo>=bar\\09)', type: 'ge', val: v2, output: '(foo>=bar\t)' },
+    { str: '(foo=\tbar)', type: 'equal', val: v3, output: '(foo=\tbar)' },
+    { str: '(foo<=\tbar)', type: 'le', val: v3, output: '(foo<=\tbar)' },
+    { str: '(foo>=\tbar)', type: 'ge', val: v3, output: '(foo>=\tbar)' },
+    { str: '(foo=\\09bar)', type: 'equal', val: v3, output: '(foo=\tbar)' },
+    { str: '(foo<=\\09bar)', type: 'le', val: v3, output: '(foo<=\tbar)' },
+    { str: '(foo>=\\09bar)', type: 'ge', val: v3, output: '(foo>=\tbar)' },
+  ]);
+});
+
+
+test('spaces in filter', function (t) {
+  var v1 = ' ';
+  var v2 = 'bar ';
+  var v3 = ' bar';
+  checkFilters(t, [
+    { str: '(foo= )', type: 'equal', val: v1, output: '(foo= )' },
+    { str: '(foo<= )', type: 'le', val: v1, output: '(foo<= )' },
+    { str: '(foo>= )', type: 'ge', val: v1, output: '(foo>= )' },
+    { str: '(foo=\\20)', type: 'equal', val: v1, output: '(foo= )' },
+    { str: '(foo<=\\20)', type: 'le', val: v1, output: '(foo<= )' },
+    { str: '(foo>=\\20)', type: 'ge', val: v1, output: '(foo>= )' },
+    { str: '(foo=bar )', type: 'equal', val: v2, output: '(foo=bar )' },
+    { str: '(foo<=bar )', type: 'le', val: v2, output: '(foo<=bar )' },
+    { str: '(foo>=bar )', type: 'ge', val: v2, output: '(foo>=bar )' },
+    { str: '(foo=bar\\20)', type: 'equal', val: v2, output: '(foo=bar )' },
+    { str: '(foo<=bar\\20)', type: 'le', val: v2, output: '(foo<=bar )' },
+    { str: '(foo>=bar\\20)', type: 'ge', val: v2, output: '(foo>=bar )' },
+    { str: '(foo= bar)', type: 'equal', val: v3, output: '(foo= bar)' },
+    { str: '(foo<= bar)', type: 'le', val: v3, output: '(foo<= bar)' },
+    { str: '(foo>= bar)', type: 'ge', val: v3, output: '(foo>= bar)' },
+    { str: '(foo=\\20bar)', type: 'equal', val: v3, output: '(foo= bar)' },
+    { str: '(foo<=\\20bar)', type: 'le', val: v3, output: '(foo<= bar)' },
+    { str: '(foo>=\\20bar)', type: 'ge', val: v3, output: '(foo>= bar)' },
+  ]);
+});
+
+
 test('literal \\ in filter', function (t) {
   var v1 = 'bar\\';
   var v2 = '\\bar\\baz\\';
