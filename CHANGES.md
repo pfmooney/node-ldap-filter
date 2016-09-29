@@ -1,5 +1,9 @@
 # ldap-filter Changelog
 
+## 0.3.3
+
+- Assert that NOT filters are closed by a parentheses
+
 ## 0.3.2
 
 - Perform better checks for trailing characters
