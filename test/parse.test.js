@@ -586,6 +586,10 @@ test('garbage in subfilter not allowed', function (t) {
     parse('(!foo=bar)');
   });
 
+  t.throws(function () {
+    parse('(!(foo=bar)a');
+  });
+
   t.end();
 });
 
