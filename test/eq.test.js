@@ -51,7 +51,7 @@ test('Construct args', function (t) {
 test('construct with raw', function (t) {
   var f = new EqualityFilter({
     attribute: 'foo',
-    raw: new Buffer([240])
+    raw: Buffer.from([240])
   });
   t.ok(f);
   t.ok(f.raw);
@@ -62,11 +62,11 @@ test('construct with raw', function (t) {
 
 test('value setter', function (t) {
   var f = new EqualityFilter();
-  var data = new Buffer([240]);
+  var data = Buffer.from([240]);
   f.value = data;
   t.equal(f.raw[0], data[0], 'preserve buffer');
 
-  data = new Buffer('a');
+  data = Buffer.from('a');
   f.value = data.toString();
   t.equal(f.raw[0], data[0], 'convert string');
 
@@ -133,13 +133,13 @@ test('escape EqualityFilter inputs', function (t) {
   t.equal(f.value, 'bar))(');
   t.equal(f.toString(), '(\\28|\\28foo=bar\\29\\29\\28)');
 
-  f.value = new Buffer([97, 115, 100, 102, 41, 40, 0, 255]);
+  f.value = Buffer.from([97, 115, 100, 102, 41, 40, 0, 255]);
   t.equal(f.toString(), '(\\28|\\28foo=\\61\\73\\64\\66\\29\\28\\00\\ff)');
 
-  f.value = new Buffer([195, 40]);
+  f.value = Buffer.from([195, 40]);
   t.equal(f.toString(), '(\\28|\\28foo=\\c3\\28)');
 
-  f.value = new Buffer([195, 177]);
+  f.value = Buffer.from([195, 177]);
   t.equal(f.toString(), '(\\28|\\28foo=ñ)');
   t.end();
 });
